@@ -11,9 +11,9 @@ pip install -r requirements.txt
 
 2. Import data set into your Amazon DocumentDB cluster
 ```sh
-mongoimport --ssl --host <DocumentDB-cluster-endpoint> --sslCAFile rds-combined-ca-bundle.pem -u <username> -p <password> -d geodata -c airports airports-us.json
+mongoimport --ssl --host <DocumentDB-cluster-endpoint> --sslCAFile rds-combined-ca-bundle.pem -u <username> -p <password> -d geodata -c airports dataset/airports-us.json
   
-mongoimport --ssl --host <DocumentDB-cluster-endpoint> --sslCAFile rds-combined-ca-bundle.pem -u <username> -p <password> -d geodata -c states states-us.json
+mongoimport --ssl --host <DocumentDB-cluster-endpoint> --sslCAFile rds-combined-ca-bundle.pem -u <username> -p <password> -d geodata -c states dataset/states-us.json
 ```
 
 3. Create 2dsphere index:
