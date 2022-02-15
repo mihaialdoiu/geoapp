@@ -23,6 +23,9 @@ switched to db geodata
 > db.airports.createIndex({"loc": "2dsphere"})
 ```
 
+4. Add the Amazon DocumentDB credentials in AWS Secrets Manager.
+Update the global variables, in the script, and specify the AWS region and secret name.
+
 ### Usage example:
 
 ```sh

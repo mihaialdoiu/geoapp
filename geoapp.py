@@ -1,6 +1,12 @@
 import pymongo
 import boto3
 import json
+import requests
+import os.path
+
+## Global variables
+SECRET_REGION = 'us-east-1'
+SECRET_NAME = 'geodata-demo-cluster'
 
 # Function for credentials retrieval from AWS Secrets Manager
 def get_credentials(region_name, secret_name):
@@ -23,9 +29,16 @@ def get_credentials(region_name, secret_name):
 # Function for connecting to Amazon DocumentDB
 def get_db_client():
     try:
-        # Use the region and secret name according to your case
+        # Get the Amazon DocumentDB ssl certificate
+        if not os.path.exists('rds-combined-ca-bundle.pem'):
+            url = 'https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem'
+            data = requests.get(url, allow_redirects=True)
+            with open('rds-combined-ca-bundle.pem', 'wb') as cert:
+                cert.write(data.content)
+
+        # Get Amazon DocumentDB credentials (specify the region and secret name according to your case)
         (username, password,
-         cluster_uri) = get_credentials('us-east-1', 'geodata-demo-cluster')
+         cluster_uri) = get_credentials(SECRET_REGION, SECRET_NAME)
         db_client = pymongo.MongoClient(
             cluster_uri,
             ssl=True,
