@@ -149,6 +149,7 @@ def geonear(proximity, lon, lat):
                     "coordinates": [lon, lat]
                 },
                 "spherical": True,
+                "query": {"type" : "International"},
                 "distanceField": "DistanceKilometers",
                 "maxDistance": (proximity * 1000),
                 "distanceMultiplier": 0.001
