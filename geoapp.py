@@ -138,7 +138,7 @@ def geowithin_count(state):
 
 
 # List geodata documents in a certain proximity (in km)
-def geonear_agg(proximity, lon, lat):
+def geonear(proximity, lon, lat):
     try:
         db_client = get_db_client()
         collection_airports = db_client['geodata']['airports']
@@ -170,7 +170,6 @@ def geonear_agg(proximity, lon, lat):
         for doc in documents_near:
             location_list.append(doc)
         return location_list
-        #print(*location_list, sep = "\n")
     except Exception as ex:
         print('Exception in geoNear: {}'.format(ex))
         raise
@@ -182,7 +181,7 @@ def main():
     distance = int(input("Enter distance radius (in km): "))
     current_state = geointersects(lon, lat)
     airports_count = geowithin_count(current_state)
-    proximity_airports = geonear_agg(distance, lon, lat)
+    proximity_airports = geonear(distance, lon, lat)
     print('The geolocation coordinate entered is in the state of: {}'.format(current_state))
     print("-----------------------------")
     print("I have found a number of {} airports in {}.".format(airports_count, current_state))
