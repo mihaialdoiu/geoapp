@@ -44,7 +44,6 @@ def get_db_client():
             ssl=True,
             retryWrites=False,
             ssl_ca_certs='rds-combined-ca-bundle.pem')
-        db_client.admin.command('ismaster')
         db_client["admin"].authenticate(name=username, password=password)
     except Exception as ex:
         print('Failed to create new DocumentDB client: {}'.format(ex))
