@@ -1,12 +1,13 @@
+import os.path
+import json
 import pymongo
 import boto3
-import json
 import requests
-import os.path
 
-## Global variables
+# Global variables
 SECRET_REGION = 'us-east-1'
 SECRET_NAME = 'geodata-demo-cluster'
+
 
 # Function for credentials retrieval from AWS Secrets Manager
 def get_credentials(region_name, secret_name):
@@ -21,9 +22,8 @@ def get_credentials(region_name, secret_name):
         password = secret_json['password']
         cluster_uri = secret_json['host']
         return (username, password, cluster_uri)
-    except Exception as ex:
-        print('Failed to retrieve secret {}'.format(secret_name))
-        raise
+    except Exception as e:
+        print('Failed to retrieve secret {} because: {}'.format(secret_name, e))
 
 
 # Function for connecting to Amazon DocumentDB
@@ -45,8 +45,8 @@ def get_db_client():
             retryWrites=False,
             ssl_ca_certs='rds-combined-ca-bundle.pem')
         db_client["admin"].authenticate(name=username, password=password)
-    except Exception as ex:
-        print('Failed to create new DocumentDB client: {}'.format(ex))
+    except Exception as e:
+        print('Failed to create new DocumentDB client: {}'.format(e))
         raise
     return db_client
 
@@ -56,9 +56,9 @@ def geointersects(lon, lat):
     try:
         check_float_lon = isinstance(lon, float)
         check_float_lat = isinstance(lat, float)
-        if check_float_lon == False or check_float_lat == False:
+        if check_float_lon is False or check_float_lat is False:
             print("The longitude or latitude coordinates are not correct, float type required!")
-            return
+            quit()
         db_client = get_db_client()
         collection_states = db_client['geodata']['states']
 
@@ -78,10 +78,13 @@ def geointersects(lon, lat):
                                                   "_id": 0,
                                                   "name": 1
                                               })
-        state_name = document['name']
-        return state_name
-    except Exception as ex:
-        print('Exception in geoIntersects: {}'.format(ex))
+        if document is not None:
+            state_name = document['name']
+            return state_name
+        else:
+            print("The geo location you entered was not found in the United States!")
+    except Exception as e:
+        print('Exception in geoIntersects: {}'.format(e))
         raise
 
 
@@ -116,8 +119,8 @@ def geowithin_list(state):
         for doc in documents_within:
             location_list.append(doc)
         return location_list
-    except Exception as ex:
-        print('Exception in geoWithin_list: {}'.format(ex))
+    except Exception as e:
+        print('Exception in geoWithin_list: {}'.format(e))
         raise
 
 
@@ -144,8 +147,8 @@ def geowithin_count(state):
         documents_within_count = collection_airports.count_documents(
             query_geowithin)
         return documents_within_count
-    except Exception as ex:
-        print('Exception in geoWithin_count: {}'.format(ex))
+    except Exception as e:
+        print('Exception in geoWithin_count: {}'.format(e))
         raise
 
 
@@ -161,7 +164,7 @@ def geonear(proximity, lon, lat):
                     "coordinates": [lon, lat]
                 },
                 "spherical": True,
-                "query": {"type" : "International"},
+                "query": {"type": "International"},
                 "distanceField": "DistanceKilometers",
                 "maxDistance": (proximity * 1000),
                 "distanceMultiplier": 0.001
@@ -183,8 +186,8 @@ def geonear(proximity, lon, lat):
         for doc in documents_near:
             location_list.append(doc)
         return location_list
-    except Exception as ex:
-        print('Exception in geoNear: {}'.format(ex))
+    except Exception as e:
+        print('Exception in geoNear: {}'.format(e))
         raise
 
 
