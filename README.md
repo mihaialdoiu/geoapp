@@ -1,5 +1,5 @@
 # geoapp
-Exemplify geospatial query capabilities in Amazon DocumentDB or MongoDB.
+Showcase geospatial query capabilities in Amazon DocumentDB or MongoDB.
 The app takes a geospatial coordinate and a distance radius as input. It identifies the US state the coordinate is part of, 
 finds the number of airports located in the state and then lists the ones found in the specified radius, sorted by closest.
 
